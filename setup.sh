@@ -181,9 +181,27 @@ sed -i "s/API_PORT=\"9090\"/API_PORT=\"${API_PORT}\"/" /usr/local/bin/proxy
 sed -i "s/PROXY_PORT=\"7890\"/PROXY_PORT=\"${PROXY_PORT}\"/" /usr/local/bin/proxy
 chmod +x /usr/local/bin/proxy
 log "管理命令已安装: proxy"
-# ---------- 7. 智能节点选择 ----------
+
+# ---------- 7. 配置终端自动代理 ----------
 echo ""
-echo -e "${YELLOW}--- Step 7: 选择初始节点 ---${NC}"
+echo -e "${YELLOW}--- Step 7: 配置终端自动代理 ---${NC}"
+
+if grep -q "proxy-setup" ~/.bashrc 2>/dev/null; then
+    log "~/.bashrc 已配置, 跳过"
+else
+    cat >> ~/.bashrc << BASHRC_EOF
+
+# >>> 代理配置 (由 proxy-setup 添加)
+export http_proxy=http://127.0.0.1:${PROXY_PORT}
+export https_proxy=http://127.0.0.1:${PROXY_PORT}
+# <<< 代理配置
+BASHRC_EOF
+    log "已写入 ~/.bashrc (新终端自动生效)"
+fi
+
+# ---------- 8. 智能节点选择 ----------
+echo ""
+echo -e "${YELLOW}--- Step 8: 选择初始节点 ---${NC}"
 
 # 等待订阅拉取
 warn "等待订阅拉取 (最多 30 秒)..."
@@ -271,9 +289,9 @@ else
     SELECTED_NODE="DIRECT"
 fi
 
-# ---------- 8. 验证 ----------
+# ---------- 9. 验证 ----------
 echo ""
-echo -e "${YELLOW}--- Step 8: 验证连通性 ---${NC}"
+echo -e "${YELLOW}--- Step 9: 验证连通性 ---${NC}"
 
 if [ "$SELECTED_NODE" != "DIRECT" ]; then
     HTTP_CODE=$(curl -sf --proxy "http://127.0.0.1:${PROXY_PORT}" --connect-timeout 10 \
