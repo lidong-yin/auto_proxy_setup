@@ -12,7 +12,7 @@ cd auto_proxy_setup
 # 2. 编辑配置（只改一行订阅链接即可）
 vim config/config.sh
 
-# 3. 一键安装
+# 3. 一键安装「注意：安装完成后会自动设置环境变量，重新启动或新建终端窗口即可连接」
 sudo bash setup.sh
 ```
 
